@@ -1,0 +1,18 @@
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor directories
+.vscode/
+.idea/
+
+# Python cache & temp inspection scripts
+__pycache__/
+*.pyc
+inspect_html.py
+tu_component_extracted.js
+
+# Logs and temporary files
+*.log
+*.tmp
