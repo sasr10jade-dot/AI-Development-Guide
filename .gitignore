@@ -13,6 +13,11 @@ __pycache__/
 inspect_html.py
 tu_component_extracted.js
 
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
 # Logs and temporary files
 *.log
 *.tmp

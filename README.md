@@ -199,12 +199,44 @@
 
 ---
 
+## ⚡ Gemini AI 엔진 & ngrok 연동 (실전 PoC)
+
+본 저장소에는 ngrok 터널(`https://stem-shifter-selected.ngrok-free.dev`) 및 로컬 환경에서 **Google Gemini 2.0 Flash AI 엔진**을 즉시 구동할 수 있는 경량 백엔드와 테스트 웹 UI가 포함되어 있습니다:
+
+### 1. 구성 파일
+* **`server_gemini.py`**: FastAPI 기반 초경량 Gemini 백엔드 서버 (CORS 완비, ngrok 무료 경고 바이패스 헤더 내장, 실시간 스트리밍 지원)
+* **`test_client.html`**: 브라우저에서 바로 실행하는 실시간 대화형 테스트 대시보드
+* **`.env.example`**: API 키 설정용 환경변수 템플릿
+
+### 2. 빠른 실행 방법
+```bash
+# 1. 패키지 설치
+pip install fastapi uvicorn google-genai pydantic
+
+# 2. API 키 설정 (.env 파일에 GEMINI_API_KEY 입력 또는 환경변수 설정)
+export GEMINI_API_KEY="AIzaSy..."   # Windows PowerShell: $env:GEMINI_API_KEY="AIzaSy..."
+
+# 3. 로컬 서버 실행 (포트 8000)
+python server_gemini.py
+
+# 4. ngrok 터널 연결 (별도 터미널)
+ngrok http 8000 --url=stem-shifter-selected.ngrok-free.dev
+
+# 5. 테스트 클라이언트 실행
+test_client.html 파일을 브라우저에서 열고 질의 테스트 진행
+```
+
+---
+
 ## 📁 저장소 구성
 
 ```
 AI-Development-Guide/
 ├── README.md                               # 가이드 요약 및 프로젝트 설명
-├── .gitignore                              # Git 제외 대상 설정
+├── .gitignore                              # Git 제외 대상 설정 (.env 보안 보호)
+├── .env.example                            # Gemini API 키 환경변수 템플릿
+├── server_gemini.py                        # ngrok 연동용 Gemini 2.0 Flash 백엔드 서버
+├── test_client.html                        # 브라우저용 실시간 AI 엔진 테스트 클라이언트
 ├── index.html                              # 인터랙티브 웹 매뉴얼 (GitHub Pages 지원)
 ├── Autocrypt-Ai-Methodology-Manual.html    # 원본 웹 매뉴얼
 ├── AI_표준개발방법론_매뉴얼_전략개발1팀_260930.pdf # 원본 표준 매뉴얼 PDF

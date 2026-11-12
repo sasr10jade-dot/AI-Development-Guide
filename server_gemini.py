@@ -39,6 +39,18 @@ async def add_ngrok_bypass_header(request: Request, call_next):
     return response
 
 # 3. Gemini 클라이언트 초기화
+# .env 파일이 로컬에 존재할 경우 자동 로딩
+if os.path.exists(".env"):
+    try:
+        with open(".env", "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+    except Exception:
+        pass
+
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 
 def get_gemini_client():

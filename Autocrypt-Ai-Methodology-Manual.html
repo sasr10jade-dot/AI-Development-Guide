@@ -2004,6 +2004,24 @@ function DiagramsSection(){
               s("div", {className: "p-2 rounded bg-emerald-500/10 text-emerald-500 font-black", children: "고객인수 (UAT 완료)"})
             ]}),
             s("p", {className: "text-[11px] text-[var(--muted)] mt-2", children: "※ 모든 요구사항은 시작부터 끝까지 단 하나의 고유 ID(REQ-xxx)로 추적되며, 중간 누락이나 미구현 시 단계 통과가 불가능합니다."})
+          ]}),
+
+          // PoC Engine Tester Link
+          m("div", {className: "p-4 rounded-xl bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3", children: [
+            m("div", {className: "flex items-center gap-2.5", children: [
+              s("span", {className: "w-8 h-8 rounded-lg bg-blue-600 text-white font-black grid place-items-center text-sm shrink-0", children: "PoC"}),
+              m("div", {children: [
+                s("b", {className: "text-xs text-white block", children: "실시간 Gemini AI 엔진 연동 테스트 (FastAPI + ngrok)"}),
+                s("span", {className: "text-[11px] text-slate-300", children: "본 매뉴얼에 기술된 AI 엔진과 ngrok 터널을 웹 클라이언트에서 바로 테스트할 수 있습니다."})
+              ]})
+            ]}),
+            s("a", {
+              href: "test_client.html",
+              target: "_blank",
+              rel: "noopener noreferrer",
+              className: "px-3.5 py-1.5 rounded-lg text-xs font-black bg-blue-600 hover:bg-blue-500 text-white shadow transition shrink-0 text-center",
+              children: "⚡ AI 엔진 테스터 열기 ▶"
+            })
           ]})
         ]})
       ]})
