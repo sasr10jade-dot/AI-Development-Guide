@@ -2089,7 +2089,7 @@ var I18N_BODY = {
   "표준을 지키는 것이 곧 재현 가능한 품질이다.": "Adhering to standards is the only path to reproducible quality.",
   "감사합니다.": "Thank You."
 };
-function Be({id:e,num:t,title:n,sub:r,children:l}){
+function Be({id:e,num:t,title:n,sub:r,children:l,lang}){
   let curLang=(typeof document!=="undefined"&&document.documentElement.getAttribute("data-lang"))||"kr";
   let secInfo=(sectionTitles[curLang]&&sectionTitles[curLang][e])||null;
   let finalTitle=(secInfo&&secInfo.title)||n;
