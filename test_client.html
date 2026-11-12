@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini ngrok AI Engine Tester</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Noto Sans KR', sans-serif; }
+    .chat-bubble-ai { background: #f1f5f9; border-left: 4px solid #2563eb; }
+    .chat-bubble-user { background: #2563eb; color: #ffffff; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col items-center p-4 md:p-8">
+
+  <div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col h-[90vh]">
+    
+    <!-- Top Header -->
+    <header class="bg-[#0A1633] text-white px-6 py-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-700">
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-lg shadow-md">G</span>
+        <div>
+          <h1 class="font-black text-lg tracking-wide flex items-center gap-2">
+            Gemini AI Engine Test Client
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">ngrok 연동</span>
+          </h1>
+          <p class="text-xs text-slate-400">stem-shifter-selected.ngrok-free.dev 터널 및 로컬 서버 실시간 연동 테스트</p>
+        </div>
+      </div>
+      
+      <!-- Connection Status Badge -->
+      <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700 text-xs">
+        <span id="statusDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+        <span id="statusText" class="font-bold text-slate-300">상태 미확인</span>
+        <button onclick="checkHealth()" class="ml-1 px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition">연결 점검</button>
+      </div>
+    </header>
+
+    <!-- Configuration Bar -->
+    <div class="bg-slate-100 px-6 py-3 border-b border-slate-200 flex flex-wrap items-center gap-4 text-xs font-medium">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-600">서버 대상:</span>
+        <select id="serverUrl" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-700 focus:outline-none focus:border-blue-500">
+          <option value="https://stem-shifter-selected.ngrok-free.dev" selected>ngrok 터널 (stem-shifter-selected...)</option>
+          <option value="http://localhost:8000">로컬 서버 (http://localhost:8000)</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-600">AI 모델:</span>
+        <select id="modelSelect" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-bold text-slate-700 focus:outline-none focus:border-blue-500">
+          <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash (초고속 추천)</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          <option value="gemini-1.5-pro">Gemini 1.5 Pro (고도 추론)</option>
+        </select>
+      </div>
+
+      <div class="ml-auto text-slate-400 text-[11px]">
+        ※ ngrok 무료 경고 자동 바이패스 헤더 탑재
+      </div>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4">
+      <div class="chat-bubble-ai p-4 rounded-2xl max-w-2xl text-sm leading-relaxed shadow-sm">
+        <div class="font-bold text-blue-600 text-xs mb-1 flex items-center gap-1.5">
+          <span>✨ Gemini AI 엔진</span>
+          <span class="text-slate-400 font-normal">안내</span>
+        </div>
+        안녕하세요! <b>ngrok 터널</b>과 연동된 <b>Gemini AI 엔진</b> 테스트 클라이언트입니다.<br>
+        하단의 입력창에 메시지를 입력하여 정상 동작 여부를 테스트해 보세요.
+      </div>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="p-4 bg-white border-t border-slate-200">
+      <form id="chatForm" onsubmit="handleSend(event)" class="flex gap-2">
+        <input 
+          type="text" 
+          id="promptInput" 
+          placeholder="Gemini에게 질문을 입력하세요... (예: 5단계 시스템 아키텍처 핵심 요약해줘)" 
+          class="flex-1 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 font-medium"
+          autocomplete="off"
+        />
+        <button 
+          type="submit" 
+          id="sendBtn"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center gap-1.5 shadow-md shrink-0 disabled:opacity-50"
+        >
+          <span>전송</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+      </form>
+      <div class="flex items-center gap-2 mt-2 text-[11px] text-slate-400">
+        <span>추천 테스트 질의:</span>
+        <button type="button" onclick="setPreset('전자정부 표준프레임워크 4.0 연계 방법 요약해줘')" class="hover:text-blue-600 underline">eGovFrame 4.0</button>
+        <span>·</span>
+        <button type="button" onclick="setPreset('RTM 요구사항 추적표의 11단계 역할 설명해줘')" class="hover:text-blue-600 underline">RTM 추적표</button>
+        <span>·</span>
+        <button type="button" onclick="setPreset('4자 협업 수영레인에서 PM과 QA의 R&R 차이는?')" class="hover:text-blue-600 underline">RACI 수영레인</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    async function checkHealth() {
+      const serverUrl = document.getElementById("serverUrl").value;
+      const statusDot = document.getElementById("statusDot");
+      const statusText = document.getElementById("statusText");
+
+      statusText.innerText = "연결 점검 중...";
+      statusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping";
+
+      try {
+        const res = await fetch(`${serverUrl}/`, {
+          method: "GET",
+          headers: {
+            "ngrok-skip-browser-warning": "true"
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400";
+          statusText.innerText = data.gemini_api_key_configured ? "정상 연결 (API 키 완비)" : "연결됨 (API 키 미설정)";
+          statusText.className = "font-bold text-emerald-300";
+        } else {
+          throw new Error(`HTTP ${res.status}`);
+        }
+      } catch (err) {
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
+        statusText.innerText = "연결 실패 (서버 미실행)";
+        statusText.className = "font-bold text-rose-400";
+      }
+    }
+
+    function setPreset(text) {
+      document.getElementById("promptInput").value = text;
+      document.getElementById("promptInput").focus();
+    }
+
+    async function handleSend(e) {
+      e.preventDefault();
+      const input = document.getElementById("promptInput");
+      const prompt = input.value.trim();
+      if (!prompt) return;
+
+      const serverUrl = document.getElementById("serverUrl").value;
+      const model = document.getElementById("modelSelect").value;
+      const chatBox = document.getElementById("chatBox");
+      const sendBtn = document.getElementById("sendBtn");
+
+      // 1. Append User Message
+      const userBubble = document.createElement("div");
+      userBubble.className = "flex justify-end";
+      userBubble.innerHTML = `
+        <div class="chat-bubble-user p-3.5 rounded-2xl max-w-xl text-sm leading-relaxed shadow-md">
+          <p>${escapeHtml(prompt)}</p>
+        </div>
+      `;
+      chatBox.appendChild(userBubble);
+      input.value = "";
+      input.disabled = true;
+      sendBtn.disabled = true;
+
+      // 2. Append Loading AI Bubble
+      const aiBubble = document.createElement("div");
+      aiBubble.className = "flex justify-start";
+      aiBubble.innerHTML = `
+        <div class="chat-bubble-ai p-4 rounded-2xl max-w-2xl text-sm leading-relaxed shadow-sm">
+          <div class="font-bold text-blue-600 text-xs mb-1 flex items-center gap-1.5">
+            <span>✨ Gemini (${model})</span>
+            <span class="text-slate-400 font-normal">생각 중...</span>
+          </div>
+          <p class="text-slate-500 italic animate-pulse">답변을 생성하고 있습니다...</p>
+        </div>
+      `;
+      chatBox.appendChild(aiBubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // 3. Request Server
+      try {
+        const res = await fetch(`${serverUrl}/ask`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            model: model
+          })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({ detail: res.statusText }));
+          throw new Error(errData.detail || `서버 오류 (${res.status})`);
+        }
+
+        const data = await res.json();
+        aiBubble.querySelector("p").className = "text-slate-800 whitespace-pre-wrap";
+        aiBubble.querySelector("p").innerText = data.reply;
+        aiBubble.querySelector(".text-slate-400").innerText = "응답 완료";
+      } catch (err) {
+        aiBubble.querySelector("p").className = "text-rose-600 font-bold";
+        aiBubble.querySelector("p").innerText = `⚠️ 오류: ${err.message}\n(로컬 서버가 구동 중인지, GEMINI_API_KEY가 설정되어 있는지 확인하세요)`;
+        aiBubble.querySelector(".text-slate-400").innerText = "오류 발생";
+      } finally {
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Auto health-check on initial load
+    window.addEventListener("DOMContentLoaded", () => {
+      checkHealth();
+    });
+  </script>
+</body>
+</html>
