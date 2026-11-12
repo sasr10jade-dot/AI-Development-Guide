@@ -1,4 +1,4 @@
-# AI 활용 표준 개발 방법론 (AI Development Guide)
+# Jade AI 개발방법론 (Jade AI Development Guide)
 
 > **"개발 지식이 없어도 따라 하는 11단계 가이드"**  
 > AI가 문서와 코드를 만들고, 사람이 확인하고 책임지는 실무 표준 개발 방법론  
